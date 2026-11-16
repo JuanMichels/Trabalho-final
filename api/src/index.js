@@ -6,6 +6,29 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 
+const allowedOrigins = new Set(
+  (process.env.CORS_ORIGINS || 'http://localhost:9000,http://127.0.0.1:9000')
+    .split(',')
+    .map(origin => origin.trim())
+);
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 require('./routers')(app);
 
 app.get('/', async (req, res) => {
