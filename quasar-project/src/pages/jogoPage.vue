@@ -61,20 +61,8 @@
             :key="jogo.id"
             class="card-jogo"
             flat
+            :style="estiloFundo(jogo.imagem)"
           >
-
-            <q-img
-              :src="jogo.imagem"
-              ratio="3/4"
-              class="capa-jogo"
-            >
-              <template v-slot:error>
-                <div class="absolute-full flex flex-center bg-grey-9 text-white">
-                  <q-icon name="videogame_asset" size="50px" />
-                </div>
-              </template>
-            </q-img>
-
             <q-card-section class="informacoes">
               <div class="nome-jogo">
                 {{ jogo.nome }}
@@ -198,22 +186,39 @@
 }
 
 .card-jogo {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 270px;
   background: #1b2838;
+  background-size: cover;
+  background-position: center;
   color: white;
-  transition: 0.2s;
+  transition: box-shadow 0.2s;
   overflow: hidden;
 }
 
-.card-jogo:hover {
-  transform: translateY(-5px);
-  background: #26394d;
+.card-jogo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(16, 25, 35, 0.98),
+    rgba(16, 25, 35, 0.05)
+  );
+  pointer-events: none;
 }
 
-.capa-jogo {
-  width: 100%;
+.card-jogo:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .informacoes {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: auto;
   padding: 14px;
 }
 
@@ -286,6 +291,12 @@ import { getJogo } from '@/services/jogo.js'
 const jogos = ref([])
 const carregando = ref(false)
 const erro = ref(false)
+
+function estiloFundo(imagem) {
+  return {
+    backgroundImage: imagem ? `url(${JSON.stringify(imagem)})` : 'none'
+  }
+}
 
 async function carregarJogos() {
   carregando.value = true

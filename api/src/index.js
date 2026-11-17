@@ -1,10 +1,12 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const app = express();
 const db = require('./configs');
 const PORT = process.env.PORT;
 
 app.use(express.json());
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
 const allowedOrigins = new Set(
   (process.env.CORS_ORIGINS || 'http://localhost:9000,http://127.0.0.1:9000')

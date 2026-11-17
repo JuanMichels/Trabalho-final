@@ -2,13 +2,25 @@ const service = require('../services/jogo');
 
 async function cadastroJogo(req, res) {
      try {
-        if(!req.body.nome || !req.body.resumo || !req.body.desenvolvedora || !req.body.ano_lancamento || !req.body.plataforma) {
+        const body = req.body || {};
+        const camposObrigatorios = ['nome', 'resumo', 'desenvolvedora', 'ano_lancamento', 'plataforma'];
+        const camposAusentes = camposObrigatorios.filter((campo) => {
+            const valor = body[campo];
+            return valor === undefined || valor === null || (typeof valor === 'string' && !valor.trim());
+        });
+
+        if(camposAusentes.length > 0) {
             return res.status(400).json({
                 status: 'error',
-                message: 'Todos os campos são obrigatórios'
+                message: `Campos obrigatórios ausentes: ${camposAusentes.join(', ')}`,
+                camposAusentes
             })
         }
-        const result = await service.cadastroJogo(req.body)
+        const jogo = {
+            ...body,
+            imagem: req.file ? `/uploads/${req.file.filename}` : null
+        };
+        const result = await service.cadastroJogo(jogo)
         return res.status(201).json({
             status: 'ok',
             message: 'Jogo cadastrado com sucesso',

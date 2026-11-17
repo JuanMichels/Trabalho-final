@@ -20,7 +20,10 @@ export async function getJogo() {
     throw new Error('A API não retornou uma lista de jogos.')
   }
 
-  return jogos
+  return jogos.map((jogo) => ({
+    ...jogo,
+    imagem: jogo.imagem ? new URL(jogo.imagem, api.defaults.baseURL).href : null
+  }))
 }
 export async function cadastrarJogo(jogo) {
   const response = await api.post('/jogo', jogo)

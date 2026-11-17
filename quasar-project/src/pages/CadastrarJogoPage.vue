@@ -167,7 +167,122 @@
 
 
 <script setup>
+import { reactive, ref, onBeforeUnmount } from 'vue'
+import { api } from '@/boot/axios'
 
+const anoAtual = new Date().getFullYear()
+
+const formInicial = () => ({
+  nome: '',
+  resumo: '',
+  desenvolvedora: '',
+  ano_lancamento: null,
+  plataforma: ''
+})
+
+const form = reactive(formInicial())
+
+const imagem = ref(null)
+const imagemPreview = ref('')
+const erroImagem = ref('')
+const salvando = ref(false)
+const mensagem = ref('')
+const tipoMensagem = ref('')
+
+function selecionarImagem(event) {
+  const arquivo = event.target.files?.[0]
+  erroImagem.value = ''
+
+  if (!arquivo) return
+
+  const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp']
+
+  if (!tiposPermitidos.includes(arquivo.type)) {
+    erroImagem.value = 'Escolha uma imagem JPG, PNG ou WEBP.'
+    event.target.value = ''
+    return
+  }
+
+  if (arquivo.size > 5 * 1024 * 1024) {
+    erroImagem.value = 'A imagem deve ter no máximo 5 MB.'
+    event.target.value = ''
+    return
+  }
+
+  if (imagemPreview.value) {
+    URL.revokeObjectURL(imagemPreview.value)
+  }
+
+  imagem.value = arquivo
+  imagemPreview.value = URL.createObjectURL(arquivo)
+}
+
+function limparFormulario() {
+  Object.assign(form, formInicial())
+  imagem.value = null
+
+  if (imagemPreview.value) {
+    URL.revokeObjectURL(imagemPreview.value)
+  }
+
+  imagemPreview.value = ''
+  erroImagem.value = ''
+
+  const input = document.querySelector('.file-input')
+  if (input) input.value = ''
+}
+
+async function salvarJogo() {
+  mensagem.value = ''
+  tipoMensagem.value = ''
+
+  if (!form.nome.trim()) {
+    mensagem.value = 'Informe o nome do jogo.'
+    tipoMensagem.value = 'erro'
+    return
+  }
+
+  const dados = new FormData()
+  dados.append('nome', form.nome)
+  dados.append('resumo', form.resumo)
+  dados.append('desenvolvedora', form.desenvolvedora)
+  if (form.ano_lancamento !== null && form.ano_lancamento !== '') {
+    dados.append('ano_lancamento', String(form.ano_lancamento))
+  }
+  dados.append('plataforma', form.plataforma)
+
+  if (imagem.value) {
+    dados.append('imagem', imagem.value)
+  }
+
+  salvando.value = true
+
+  try {
+    await api.post('/jogo', dados)
+
+    limparFormulario()
+    mensagem.value = 'Jogo cadastrado com sucesso!'
+    tipoMensagem.value = 'sucesso'
+
+  } catch (error) {
+    console.error('Erro ao cadastrar jogo:', error)
+
+    mensagem.value =
+      error.response?.data?.message ||
+      'Não foi possível cadastrar o jogo. Verifique os dados informados e a API.'
+
+    tipoMensagem.value = 'erro'
+
+  } finally {
+    salvando.value = false
+  }
+}
+
+onBeforeUnmount(() => {
+  if (imagemPreview.value) {
+    URL.revokeObjectURL(imagemPreview.value)
+  }
+})
 </script>
 
 

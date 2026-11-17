@@ -8,14 +8,15 @@ async function getJogo(){
 }
 
 async function cadastroJogo(params) {
-    const {nome, resumo, desenvolvedora, ano_lancamento, plataforma} = params
+    const {nome, resumo, desenvolvedora, ano_lancamento, plataforma, imagem} = params
     const sql = 'INSERT INTO jogo (nome, '
     + 'resumo,' 
     + 'desenvolvedora, '
     + 'ano_lancamento, '
-    + 'plataforma) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+    + 'plataforma, '
+    + 'imagem) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *'
 
-    return await db.query(sql, [nome, resumo, desenvolvedora, ano_lancamento, plataforma])
+    return await db.query(sql, [nome, resumo, desenvolvedora, ano_lancamento, plataforma, imagem])
 }
 
 async function deletarJogo(params) {
