@@ -29,3 +29,38 @@ export async function cadastrarJogo(jogo) {
   const response = await api.post('/jogo', jogo)
   return response.data
 }
+
+export async function getAvaliacoes() {
+  const response = await api.get('/avaliacao')
+  const payload = response.data
+  const avaliacoes = Array.isArray(payload)
+    ? payload
+    : (payload?.data?.rows ?? payload?.data)
+
+  return Array.isArray(avaliacoes) ? avaliacoes : []
+}
+
+export async function cadastrarAvaliacao(dados) {
+  const response = await api.post('/avaliacao', dados)
+  return response.data
+}
+
+export async function atualizarAvaliacao(id, dados) {
+  const response = await api.put(`/avaliacao/${id}`, dados)
+  return response.data
+}
+
+export async function deletarAvaliacao(id) {
+  const response = await api.delete(`/avaliacao/${id}`)
+  return response.data
+}
+
+export async function atualizarJogo(id, dados) {
+  const response = await api.put(`/jogo/${id}`, dados)
+  return response.data
+}
+
+export async function deletarJogo(id) {
+  const response = await api.delete(`/jogo/${id}`)
+  return response.data
+}

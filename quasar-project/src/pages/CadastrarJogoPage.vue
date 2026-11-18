@@ -5,11 +5,10 @@
 
       <header class="page-header">
         <div>
-          <span class="eyebrow">ALL GAME COME / BIBLIOTECA</span>
+          <span class="eyebrow">ALL GAME COME / JOGOs</span>
           <h1>Adicionar um jogo</h1>
-          <p>Cadastre um novo título na sua biblioteca.</p>
+          <p>Cadastre um novo jogo para receber avaliações de usuarios.</p>
         </div>
-        <div class="header-icon">＋</div>
       </header>
 
       <form class="game-form" @submit.prevent="salvarJogo">

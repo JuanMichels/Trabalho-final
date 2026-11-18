@@ -50,6 +50,36 @@ async function getJogo(req, res) {
         })
     }   
 }
+
+async function atualizarJogo(req, res) {
+    try {
+        const dados = {
+            ...req.body,
+            imagem: req.file ? `/uploads/${req.file.filename}` : undefined
+        }
+        const result = await service.atualizarJogo(req.params.id, dados)
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Jogo não encontrado'
+            })
+        }
+
+        return res.status(200).json({
+            status: 'ok',
+            message: 'Jogo atualizado com sucesso',
+            data: result.rows[0]
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: 'error',
+            message: 'Erro ao atualizar jogo',
+            error: error.message
+        })
+    }
+}
+
 async function deletarJogo(req, res) {
     try {
         const result = await service.deletarJogo(req.params)
@@ -75,5 +105,6 @@ async function deletarJogo(req, res) {
 module.exports = {
     getJogo,
     cadastroJogo,
+    atualizarJogo,
     deletarJogo
 }

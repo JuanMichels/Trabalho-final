@@ -3,9 +3,10 @@ const routes = [
     path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('@/pages/IndexPage.vue') },
+      { path: 'Index', component: () => import('@/pages/IndexPage.vue') },
       { path: 'jogos', component: () => import('@/pages/jogoPage.vue') },
-      { path: 'cadastrar-jogos', component: () => import('@/pages/cadastrarJogoPage.vue') }
+      { path: 'jogos/:id', component: () => import('@/pages/JogoDetalhesPage.vue') },
+      { path: 'cadastrar-jogos', component: () => import('@/pages/CadastrarJogoPage.vue') }
     ]
   },
 

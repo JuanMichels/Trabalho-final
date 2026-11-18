@@ -62,6 +62,11 @@
             class="card-jogo"
             flat
             :style="estiloFundo(jogo.imagem)"
+            role="button"
+            tabindex="0"
+            @click="abrirJogo(jogo.id)"
+            @keyup.enter="abrirJogo(jogo.id)"
+            @keyup.space.prevent="abrirJogo(jogo.id)"
           >
             <q-card-section class="informacoes">
               <div class="nome-jogo">
@@ -212,6 +217,7 @@
 
 .card-jogo:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 .informacoes {
@@ -286,8 +292,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getJogo } from '@/services/jogo.js'
 
+const router = useRouter()
 const jogos = ref([])
 const carregando = ref(false)
 const erro = ref(false)
@@ -296,6 +304,10 @@ function estiloFundo(imagem) {
   return {
     backgroundImage: imagem ? `url(${JSON.stringify(imagem)})` : 'none'
   }
+}
+
+function abrirJogo(id) {
+  router.push(`/jogos/${id}`)
 }
 
 async function carregarJogos() {
